@@ -32,26 +32,25 @@
 
           {%- if size_variant -%}
             {%- comment -%} Build scents array: all products × their size variant {%- endcomment -%}
-            {%- assign scents_array = '' | split: '' -%}
+            {%- assign scents_json_parts = '' -%}
             {%- for prod in all_block_products -%}
               {%- if prod -%}
                 {%- for var in prod.variants -%}
                   {%- if var.option1 == size_option_value or var.option2 == size_option_value or var.option3 == size_option_value -%}
-                    {%- capture scent_json -%}
-                      {
-                        "id": {{ var.id }},
-                        "title": "{{ prod.title | escape }}",
-                        "available": {{ var.available | default: false }}
-                      }
+                    {%- if scents_json_parts != '' -%}
+                      {%- assign scents_json_parts = scents_json_parts | append: ',' -%}
+                    {%- endif -%}
+                    {%- capture scent_obj -%}
+                      {"id": {{ var.id }}, "title": "{{ prod.title | escape }}", "available": {{ var.available | default: false }}}
                     {%- endcapture -%}
-                    {%- assign scents_array = scents_array | push: scent_json -%}
+                    {%- assign scents_json_parts = scents_json_parts | append: scent_obj -%}
                     {%- break -%}
                   {%- endif -%}
                 {%- endfor -%}
               {%- endif -%}
             {%- endfor -%}
 
-            {%- capture scents_json -%}[{{ scents_array | join: ',' }}]{%- endcapture -%}
+            {%- assign scents_json = '[' | append: scents_json_parts | append: ']' -%}
 
             <div
               class="go-card{% if is_best %} go-card--best{% endif %}"
