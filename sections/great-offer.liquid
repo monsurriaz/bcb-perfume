@@ -17,8 +17,8 @@
       {%- for block in section.blocks -%}
         {%- assign product = block.settings.product -%}
         {%- assign size_option_value = block.settings.size_option_value -%}
-        {%- assign is_best = block.settings.is_best_value -%}
         {%- assign qty = block.settings.qty_included -%}
+        {%- assign is_featured = block.type == 'featured_offer_card' -%}
 
         {%- if product -%}
           {%- comment -%} Find the variant matching this size {%- endcomment -%}
@@ -53,20 +53,20 @@
             {%- assign scents_json = '[' | append: scents_json_parts | append: ']' -%}
 
             <div
-              class="go-card{% if is_best %} go-card--best{% endif %}"
+              class="go-card{% if is_featured %} go-card--best{% endif %}"
               data-scents='{{ scents_json }}'
               data-qty="{{ qty }}"
               data-size-label="{{ block.settings.size_label }}"
               data-block-id="{{ block.id }}"
               {{ block.shopify_attributes }}
             >
-              {%- if is_best -%}
-                <div class="go-best-label">{{ block.settings.best_label_text }}</div>
+              {%- if is_featured -%}
+                <div class="go-best-label">⭐ Best Value by Far</div>
               {%- endif -%}
 
               <div class="go-size-badge">{{ block.settings.size_label }}</div>
               <div class="go-price">{{ size_variant.price | money }}</div>
-              <div class="go-deal-tag{% if is_best %} go-deal-tag--big{% endif %}">
+              <div class="go-deal-tag{% if is_featured %} go-deal-tag--big{% endif %}">
                 {{ block.settings.deal_tag_text }}
               </div>
 
@@ -79,17 +79,17 @@
 
               <div class="go-ppm-row">
                 <span class="go-ppm-label">{{ block.settings.per_ml_label }}</span>
-                <span class="go-ppm-value{% if is_best %} go-ppm-value--best{% endif %}">
+                <span class="go-ppm-value{% if is_featured %} go-ppm-value--best{% endif %}">
                   {{ block.settings.per_ml_value }}
                 </span>
               </div>
 
-              {%- if is_best and block.settings.saving_text != blank -%}
+              {%- if is_featured and block.settings.saving_text != blank -%}
                 <div class="go-saving">{{ block.settings.saving_text }}</div>
               {%- endif -%}
 
               <button
-                class="go-btn{% if is_best %} go-btn--best{% endif %}"
+                class="go-btn{% if is_featured %} go-btn--best{% endif %}"
                 type="button"
                 data-action="go-start-flow"
               >
@@ -590,7 +590,7 @@
   "blocks": [
     {
       "type": "offer_card",
-      "name": "Offer Card",
+      "name": "Tier Card",
       "settings": [
         {
           "type": "product",
@@ -634,21 +634,63 @@
           "default": "£0.35"
         },
         {
-          "type": "checkbox",
-          "id": "is_best_value",
-          "label": "Mark as best value",
-          "default": false
+          "type": "text",
+          "id": "btn_text",
+          "label": "Button text",
+          "default": "Choose your bottles →"
+        }
+      ]
+    },
+    {
+      "type": "featured_offer_card",
+      "name": "Featured Tier (Best Value)",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "product",
+          "id": "product",
+          "label": "Product"
         },
         {
           "type": "text",
-          "id": "best_label_text",
-          "label": "Best value label",
-          "default": "⭐ Best Value by Far"
+          "id": "size_label",
+          "label": "Size label (e.g., '50 ml')",
+          "default": "50 ml"
+        },
+        {
+          "type": "text",
+          "id": "size_option_value",
+          "label": "Size option value (must match variant option)",
+          "default": "50ml"
+        },
+        {
+          "type": "number",
+          "id": "qty_included",
+          "label": "Quantity of bottles to select",
+          "default": 3
+        },
+        {
+          "type": "text",
+          "id": "deal_tag_text",
+          "label": "Deal tag text",
+          "default": "Buy 1 Get 2 Free"
+        },
+        {
+          "type": "text",
+          "id": "per_ml_label",
+          "label": "Per ml label",
+          "default": "Per ml"
+        },
+        {
+          "type": "text",
+          "id": "per_ml_value",
+          "label": "Per ml value (e.g., '£0.15')",
+          "default": "£0.15"
         },
         {
           "type": "textarea",
           "id": "saving_text",
-          "label": "Savings text (optional, shown on best value card)"
+          "label": "Savings text (optional, e.g., '57% cheaper per ml than 20ml option')"
         },
         {
           "type": "text",
