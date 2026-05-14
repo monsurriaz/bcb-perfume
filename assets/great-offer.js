@@ -1,8 +1,4 @@
 (() => {
-  let goCurrentQty = 0;
-  let goCurrentScents = [];
-  let goCurrentSizeLabel = '';
-
   const state = {
     qty: 0,
     scents: [],
@@ -200,6 +196,7 @@
   }
 
   function dispatchCartAddEvent(itemCount, sections) {
+    // Event name matches CartAddEvent.eventName (ThemeEvents.cartUpdate = 'cart:update')
     const event = new CustomEvent('cart:update', {
       bubbles: true,
       detail: {

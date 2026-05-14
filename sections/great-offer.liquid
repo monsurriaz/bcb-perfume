@@ -3,8 +3,6 @@
   choose scents via a modal, and add multiple variant items to cart at once.
 {%- enddoc -%}
 
-{%- assign all_block_products = section.blocks | map: 'settings' | map: 'product' | uniq -%}
-
 <section class="great-offer-section">
   <div class="go-inner">
     <div class="go-header">
@@ -15,7 +13,7 @@
 
     <div class="go-cards">
       {%- for block in section.blocks -%}
-        {%- assign product = block.settings.product -%}
+        {%- assign block_products = block.settings.products -%}
         {%- assign size_option_value = block.settings.size_option_value -%}
         {%- assign qty = block.settings.qty_included -%}
         {%- assign is_featured = false -%}
@@ -23,10 +21,12 @@
           {%- assign is_featured = true -%}
         {%- endif -%}
 
-        {%- if product -%}
+        {%- assign price_product = block_products | first -%}
+
+        {%- if price_product -%}
           {%- comment -%} Find the variant matching this size {%- endcomment -%}
           {%- assign size_variant = nil -%}
-          {%- for variant in product.variants -%}
+          {%- for variant in price_product.variants -%}
             {%- if variant.option1 == size_option_value or variant.option2 == size_option_value or variant.option3 == size_option_value -%}
               {%- assign size_variant = variant -%}
               {%- break -%}
@@ -34,23 +34,23 @@
           {%- endfor -%}
 
           {%- if size_variant -%}
-            {%- comment -%} Build scents array: all products × their size variant {%- endcomment -%}
+            {%- comment -%} Build scents array: block products × their size variant {%- endcomment -%}
             {%- assign scents_json_parts = '' -%}
-            {%- for prod in all_block_products -%}
-              {%- if prod -%}
-                {%- for var in prod.variants -%}
-                  {%- if var.option1 == size_option_value or var.option2 == size_option_value or var.option3 == size_option_value -%}
-                    {%- if scents_json_parts != '' -%}
-                      {%- assign scents_json_parts = scents_json_parts | append: ',' -%}
-                    {%- endif -%}
-                    {%- capture scent_obj -%}
-                      {"id": {{ var.id }}, "title": "{{ prod.title | escape }}", "available": {{ var.available | default: false }}}
-                    {%- endcapture -%}
-                    {%- assign scents_json_parts = scents_json_parts | append: scent_obj -%}
-                    {%- break -%}
-                  {%- endif -%}
-                {%- endfor -%}
-              {%- endif -%}
+            {%- for prod in block_products -%}
+              {%- for var in prod.variants -%}
+                {%- if var.option1 == size_option_value
+                     or var.option2 == size_option_value
+                     or var.option3 == size_option_value -%}
+                  {%- unless scents_json_parts == '' -%}
+                    {%- assign scents_json_parts = scents_json_parts | append: ',' -%}
+                  {%- endunless -%}
+                  {%- capture scent_obj -%}
+                    {"id":{{ var.id }},"title":{{ prod.title | json }},"available":{{ var.available }}}
+                  {%- endcapture -%}
+                  {%- assign scents_json_parts = scents_json_parts | append: scent_obj -%}
+                  {%- break -%}
+                {%- endif -%}
+              {%- endfor -%}
             {%- endfor -%}
 
             {%- assign scents_json = '[' | append: scents_json_parts | append: ']' -%}
@@ -596,9 +596,10 @@
       "name": "Tier Card",
       "settings": [
         {
-          "type": "product",
-          "id": "product",
-          "label": "Product"
+          "type": "product_list",
+          "id": "products",
+          "label": "Scent products",
+          "limit": 12
         },
         {
           "type": "text",
@@ -650,9 +651,10 @@
       "limit": 1,
       "settings": [
         {
-          "type": "product",
-          "id": "product",
-          "label": "Product"
+          "type": "product_list",
+          "id": "products",
+          "label": "Scent products",
+          "limit": 12
         },
         {
           "type": "text",
