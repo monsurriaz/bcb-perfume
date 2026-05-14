@@ -150,7 +150,9 @@
 
     removeExistingError();
 
-    fetch('/cart/add.js', {
+    const cartAddUrl = window.Shopify?.routes?.cart_add_url || '/cart/add.js';
+
+    fetch(cartAddUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -158,12 +160,19 @@
       },
       body: JSON.stringify(payload)
     })
-      .then((res) => res.json())
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error(`HTTP ${res.status}`);
+        }
+        return res.json();
+      })
       .then((data) => {
+        if (!data || typeof data !== 'object') {
+          throw new Error('Invalid response structure');
+        }
+
         if (data.status) {
-          showError(
-            data.message || 'Could not add to cart. Please try again.'
-          );
+          showError(data.message || 'Could not add to cart. Please try again.');
           resetButton(btnEl, originalText);
           return;
         }
@@ -176,7 +185,8 @@
       })
       .catch((err) => {
         console.error('[Great Offer] ATC error:', err);
-        showError('Something went wrong. Please try again.');
+        const errorMsg = err?.message || 'Something went wrong. Please try again.';
+        showError(errorMsg);
         resetButton(btnEl, originalText);
       });
   }
