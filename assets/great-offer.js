@@ -200,7 +200,7 @@
   }
 
   function dispatchCartAddEvent(itemCount, sections) {
-    const event = new CustomEvent('theme:cart:add', {
+    const event = new CustomEvent('cart:update', {
       bubbles: true,
       detail: {
         resource: {},
