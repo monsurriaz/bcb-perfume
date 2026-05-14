@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git add *)",
+      "Bash(git commit -m 'Add Great Offer bundle section with scent selector modal *)",
+      "Bash(git commit -m 'Fix CartAddEvent event name in great-offer.js *)"
+    ]
+  }
+}

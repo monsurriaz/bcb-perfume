@@ -6,8 +6,80 @@
  * or related systems. Please exercise caution as any changes
  * made to this file may be overwritten.
  * ------------------------------------------------------------
- */{
+ */
+{
   "sections": {
+    "great_offer_AmkwPX": {
+      "type": "great-offer",
+      "blocks": {
+        "offer_card_VFH3nw": {
+          "type": "offer_card",
+          "settings": {
+            "products": [
+              "bcb-perfume-n47",
+              "bcb-perfume-n53",
+              "bcb-perfume-n68",
+              "bcb-perfume-n82"
+            ],
+            "size_label": "20 ml",
+            "size_option_value": "20ml",
+            "qty_included": 2,
+            "deal_tag_text": "Buy 1 Get 1 Free",
+            "per_ml_label": "Per ml",
+            "per_ml_value": "£0.35",
+            "btn_text": "Choose your 2 →"
+          }
+        },
+        "offer_card_cjpPcE": {
+          "type": "offer_card",
+          "settings": {
+            "products": [
+              "bcb-perfume-n47",
+              "bcb-perfume-n53",
+              "bcb-perfume-n68",
+              "bcb-perfume-n82"
+            ],
+            "size_label": "30 ml",
+            "size_option_value": "30ml",
+            "qty_included": 2,
+            "deal_tag_text": "Buy 1 Get 1 Free",
+            "per_ml_label": "Per ml",
+            "per_ml_value": "£0.32",
+            "btn_text": "Choose your 2 →"
+          }
+        },
+        "featured_offer_card_kwDybG": {
+          "type": "featured_offer_card",
+          "settings": {
+            "products": [
+              "bcb-perfume-n47",
+              "bcb-perfume-n53",
+              "bcb-perfume-n68",
+              "bcb-perfume-n82"
+            ],
+            "size_label": "50 ml",
+            "size_option_value": "50ml",
+            "qty_included": 3,
+            "deal_tag_text": "Buy 1 Get 2 Free",
+            "per_ml_label": "Per ml",
+            "per_ml_value": "£0.15",
+            "saving_text": "57% cheaper per ml than 20ml option",
+            "btn_text": "Choose your 3 →"
+          }
+        }
+      },
+      "block_order": [
+        "offer_card_VFH3nw",
+        "offer_card_cjpPcE",
+        "featured_offer_card_kwDybG"
+      ],
+      "name": "Great Offer Bundle",
+      "settings": {
+        "eyebrow_text": "Limited Launch Promotion",
+        "title": "The Great Offer",
+        "subtitle": "Buy our bestselling perfumes and receive extra bottles completely free. Choose your size below."
+      }
+    },
     "main": {
       "type": "product-information",
       "blocks": {
@@ -70,6 +142,7 @@
               "type": "group",
               "name": "Header",
               "settings": {
+                "link": "",
                 "open_in_new_tab": false,
                 "content_direction": "column",
                 "vertical_on_mobile": true,
@@ -408,6 +481,7 @@
     }
   },
   "order": [
+    "great_offer_AmkwPX",
     "main",
     "product_recommendations_qggXJq"
   ]

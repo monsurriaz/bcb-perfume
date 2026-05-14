@@ -123,12 +123,7 @@
 </section>
 
 {% stylesheet %}
-  *,
-  *::before,
-  *::after {
-    box-sizing: border-box;
-  }
-
+  .great-offer-section * { box-sizing: border-box; margin: 0; padding: 0; }
   .great-offer-section {
     --go-gold: #c9a84c;
     --go-gold-light: #e8d499;
@@ -550,6 +545,12 @@
     border-left: 3px solid #d32f2f;
   }
 
+  @media (min-width: 720px) and (max-width: 899px) {
+    .great-offer-section .go-cards {
+      gap: 30px 20px;
+    }
+  }
+
   @media (max-width: 720px) {
     .great-offer-section .go-cards {
       grid-template-columns: 1fr;
@@ -565,7 +566,7 @@
   }
 {% endstylesheet %}
 
-{{ 'great-offer.js' | asset_url | script_tag }}
+<script src="{{ 'great-offer.js' |  asset_url }}" defer></script>
 
 {% schema %}
 {
@@ -641,7 +642,7 @@
           "type": "text",
           "id": "btn_text",
           "label": "Button text",
-          "default": "Choose your bottles →"
+          "default": "Choose your 2 →"
         }
       ]
     },
@@ -695,13 +696,14 @@
         {
           "type": "textarea",
           "id": "saving_text",
-          "label": "Savings text (optional, e.g., '57% cheaper per ml than 20ml option')"
+          "label": "Savings text (optional, e.g., '57% cheaper per ml than 20ml option')",
+          "default": "57% cheaper per ml than 20ml option"
         },
         {
           "type": "text",
           "id": "btn_text",
           "label": "Button text",
-          "default": "Choose your bottles →"
+          "default": "Choose your 3 →"
         }
       ]
     }
