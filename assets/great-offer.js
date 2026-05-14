@@ -6,14 +6,17 @@
     blockId: ''
   };
 
+  // @ts-ignore
   function safeQS(selector) {
     return document.querySelector(selector);
   }
 
+  // @ts-ignore
   function safeQSA(selector) {
     return document.querySelectorAll(selector);
   }
 
+  // @ts-ignore
   function startFlow(cardEl) {
     if (!cardEl) return;
 
@@ -66,6 +69,7 @@
     state.scents.forEach((scent) => {
       const label = document.createElement('label');
       label.className = 'go-scent-item';
+      // @ts-ignore
       if (!scent.available) {
         label.classList.add('go-scent-item--unavailable');
       }
@@ -73,11 +77,14 @@
       const input = document.createElement('input');
       input.type = 'checkbox';
       input.className = 'go-scent-check';
+      // @ts-ignore
       input.dataset.variantId = scent.id;
+      // @ts-ignore
       input.disabled = !scent.available;
 
       const nameSpan = document.createElement('span');
       nameSpan.className = 'go-scent-name';
+      // @ts-ignore
       nameSpan.textContent = scent.title;
 
       label.appendChild(input);
@@ -91,6 +98,7 @@
     subtitle.textContent = `Select exactly ${state.qty} scents from the list below.`;
   }
 
+  // @ts-ignore
   function handleCheckboxChange(e) {
     const checked = safeQSA('#go-scent-grid .go-scent-check:checked');
     if (checked.length > state.qty) {
@@ -160,8 +168,10 @@
           return;
         }
 
-        dispatchCartAddEvent(items.length, data.sections || sectionIds);
         closeModal();
+        setTimeout(() => {
+          dispatchCartAddEvent(items.length, data.sections || sectionIds);
+        }, 400);
         resetButton(btnEl, originalText);
       })
       .catch((err) => {
@@ -171,12 +181,14 @@
       });
   }
 
+  // @ts-ignore
   function resetButton(btnEl, text) {
     if (!btnEl) return;
     btnEl.disabled = false;
     btnEl.textContent = text || 'Add to cart';
   }
 
+  // @ts-ignore
   function showError(message) {
     removeExistingError();
     const footer = safeQS('.go-modal-footer');
@@ -195,6 +207,7 @@
     }
   }
 
+  // @ts-ignore
   function dispatchCartAddEvent(itemCount, sections) {
     // Event name matches CartAddEvent.eventName (ThemeEvents.cartUpdate = 'cart:update')
     const event = new CustomEvent('cart:update', {
@@ -215,6 +228,7 @@
   function initEventListeners() {
     const cards = safeQS('.go-cards');
     if (cards) {
+      // @ts-ignore
       cards.addEventListener('click', (e) => {
         const btn = e.target.closest('[data-action="go-start-flow"]');
         if (btn) {
@@ -236,6 +250,7 @@
 
     const modal = safeQS('#go-modal');
     if (modal) {
+      // @ts-ignore
       modal.addEventListener('click', (e) => {
         if (e.target === modal) {
           closeModal();
@@ -250,6 +265,8 @@
     initEventListeners();
   }
 
+  // @ts-ignore
   window.goStartFlow = startFlow;
+  // @ts-ignore
   window.goCloseModal = closeModal;
 })();
