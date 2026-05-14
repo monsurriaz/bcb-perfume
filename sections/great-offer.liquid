@@ -18,7 +18,10 @@
         {%- assign product = block.settings.product -%}
         {%- assign size_option_value = block.settings.size_option_value -%}
         {%- assign qty = block.settings.qty_included -%}
-        {%- assign is_featured = block.type == 'featured_offer_card' -%}
+        {%- assign is_featured = false -%}
+        {%- if block.type == 'featured_offer_card' -%}
+          {%- assign is_featured = true -%}
+        {%- endif -%}
 
         {%- if product -%}
           {%- comment -%} Find the variant matching this size {%- endcomment -%}
@@ -643,7 +646,7 @@
     },
     {
       "type": "featured_offer_card",
-      "name": "Featured Tier (Best Value)",
+      "name": "Best Value Tier",
       "limit": 1,
       "settings": [
         {
