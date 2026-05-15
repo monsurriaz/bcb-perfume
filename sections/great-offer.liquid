@@ -45,7 +45,7 @@
                     {%- assign scents_json_parts = scents_json_parts | append: ',' -%}
                   {%- endunless -%}
                   {%- capture scent_obj -%}
-                    {"id":{{ var.id }},"title":{{ prod.title | json }},"available":{{ var.available }}}
+                    {"id":{{ var.id }},"title":{{ prod.title | json }},"available":{{ var.available }},"image":"{{ var.featured_image | default: prod.featured_image | image_url: width: 100 }}"}
                   {%- endcapture -%}
                   {%- assign scents_json_parts = scents_json_parts | append: scent_obj -%}
                   {%- break -%}
@@ -64,7 +64,10 @@
               {{ block.shopify_attributes }}
             >
               {%- if is_featured -%}
-                <div class="go-best-label">⭐ Best Value by Far</div>
+                <div class="go-best-label">
+                  <span class="go-best-text-desktop">{{ block.settings.best_value_text }}</span>
+                  <span class="go-best-text-mobile">{{ block.settings.best_value_text_mobile }}</span>
+                </div>
               {%- endif -%}
 
               <div class="go-size-badge">{{ block.settings.size_label }}</div>
@@ -96,7 +99,8 @@
                 type="button"
                 data-action="go-start-flow"
               >
-                {{ block.settings.btn_text }}
+                <span class="go-btn-text">{{ block.settings.btn_text }}</span>
+                <span class="go-btn-mobile-text">{{ block.settings.btn_text_mobile }}</span>
               </button>
             </div>
           {%- endif -%}
@@ -174,15 +178,9 @@
 
   .go-cards {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    grid-template-columns: repeat(3, 1fr);
     gap: 20px;
     align-items: center;
-  }
-
-  @media (min-width: 900px) {
-    .great-offer-section .go-cards {
-      grid-template-columns: repeat(3, 1fr);
-    }
   }
 
   .go-card {
@@ -233,6 +231,12 @@
     border-radius: 20px;
     white-space: nowrap;
     box-shadow: 0 4px 12px rgba(201, 168, 76, 0.4);
+  }
+  .go-best-text-mobile {
+    display: none;
+  }
+  .go-best-text-desktop {
+    display: inline-block;
   }
 
   .go-size-badge {
@@ -350,6 +354,9 @@
 
   .go-btn {
     width: 100%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     padding: 15px 20px;
     background: var(--go-dark);
     color: #fff;
@@ -377,6 +384,10 @@
 
   .go-btn--best:hover {
     background: linear-gradient(135deg, #b8963e, #c9a84c);
+  }
+
+  .go-btn .go-btn-mobile-text {
+    display: none;
   }
 
   .go-modal {
@@ -484,6 +495,23 @@
     cursor: not-allowed;
   }
 
+  .go-scent-image {
+    width: 52px;
+    height: 52px;
+    border-radius: 10px;
+    object-fit: cover;
+    object-position: center;
+    flex-shrink: 0;
+    border: 2px solid #f0ebe3;
+    transition: border-color 0.15s, box-shadow 0.15s;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  }
+
+  .go-scent-item:has(input:checked) .go-scent-image {
+    border-color: var(--go-gold);
+    box-shadow: 0 4px 12px rgba(201, 168, 76, 0.2);
+  }
+
   .go-scent-name {
     flex: 1;
     font-weight: 600;
@@ -547,21 +575,88 @@
 
   @media (min-width: 720px) and (max-width: 899px) {
     .great-offer-section .go-cards {
-      gap: 30px 20px;
+      gap: 15px;
     }
   }
 
   @media (max-width: 720px) {
     .great-offer-section .go-cards {
-      grid-template-columns: 1fr;
+      gap: 10px;
     }
-
+    .go-card {
+      border-radius: 13px;
+      padding: 8px 10px 12px;
+    }
     .go-card--best {
-      transform: none;
+      /* transform: none; */
     }
-
     .go-card--best:hover {
       transform: translateY(-6px);
+    }
+
+    .go-size-badge {
+      font-size: 10px;
+      letter-spacing: 1px;
+      margin-bottom: 6px;
+    }
+    .go-price {
+      font-size: 20px;
+    }
+    .go-deal-tag {
+      font-size: 10px;
+      padding: 3px 6px;
+      border-radius: 20px;
+      margin-bottom: 6px;
+    }
+    .go-divider {
+      margin: 7px 0;
+    }
+    .go-stat-row {
+      font-size: 9px;
+      padding: 4px 0;
+    }
+    .go-ppm-row {
+      margin-top: 5px;
+    }
+    .go-ppm-label {
+      font-size: 11px;
+    }
+    .go-ppm-value {
+      font-size: 16px;
+    }
+    .go-btn {
+      width: 100%;
+      padding: 10px 8px;
+      border-radius: 6px;
+      font-size: 11px;
+      letter-spacing: .3px;
+      margin-top: 12px;
+    }
+    .go-btn .go-btn-mobile-text {
+      display: inline-block;
+    }
+    .go-btn .go-btn-text {
+      display: none;
+    }
+    .go-best-label {
+      top: -16px;
+      font-size: 9px;
+      letter-spacing: 1px;
+      padding: 3px 8px;
+    }
+    .go-best-text-desktop {
+      display: none;
+    }
+    .go-best-text-mobile {
+      display: inline-block;
+    }
+    .go-saving {
+      display: none;
+      margin-top: 6px;
+      font-size: 9px;
+      letter-spacing: .3px;
+      padding: 6px 6px;
+      margin-bottom: 0px;
     }
   }
 {% endstylesheet %}
@@ -643,6 +738,12 @@
           "id": "btn_text",
           "label": "Button text",
           "default": "Choose your 2 →"
+        },
+        {
+          "type": "text",
+          "id": "btn_text_mobile",
+          "label": "Button text - (mobile)",
+          "default": "Choose 2 →"
         }
       ]
     },
@@ -677,6 +778,18 @@
         },
         {
           "type": "text",
+          "id": "best_value_text",
+          "label": "Best value text",
+          "default": "⭐ Best Value by Far"
+        },
+        {
+          "type": "text",
+          "id": "best_value_text_mobile",
+          "label": "Best value text - (mobile)",
+          "default": "⭐ Best Value"
+        },
+        {
+          "type": "text",
           "id": "deal_tag_text",
           "label": "Deal tag text",
           "default": "Buy 1 Get 2 Free"
@@ -704,6 +817,12 @@
           "id": "btn_text",
           "label": "Button text",
           "default": "Choose your 3 →"
+        },
+        {
+          "type": "text",
+          "id": "btn_text_mobile",
+          "label": "Button text - (mobile)",
+          "default": "Choose 3 →"
         }
       ]
     }

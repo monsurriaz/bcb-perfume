@@ -83,12 +83,20 @@
       // @ts-ignore
       input.disabled = !scent.available;
 
+      const imageImg = document.createElement('img');
+      imageImg.className = 'go-scent-image';
+      // @ts-ignore
+      imageImg.src = scent.image;
+      // @ts-ignore
+      imageImg.alt = scent.title;
+
       const nameSpan = document.createElement('span');
       nameSpan.className = 'go-scent-name';
       // @ts-ignore
       nameSpan.textContent = scent.title;
 
       label.appendChild(input);
+      label.appendChild(imageImg);
       label.appendChild(nameSpan);
       grid.appendChild(label);
 
