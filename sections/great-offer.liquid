@@ -1,7 +1,7 @@
-{%- doc -%}
+{%- comment -%}
   The Great Offer section enables customers to select from tiered bundle options,
   choose scents via a modal, and add multiple variant items to cart at once.
-{%- enddoc -%}
+{%- endcomment -%}
 
 <section class="great-offer-section">
   <div class="go-inner">
@@ -114,9 +114,21 @@
         <button class="go-modal-close" type="button" id="go-modal-close">✕</button>
         <h3 id="go-modal-title">Choose your bottles</h3>
         <p id="go-modal-subtitle" class="go-modal-sub"></p>
+
+        <!-- Progress Bar -->
+        <div class="go-progress-wrap">
+          <div class="go-progress-label">
+            <span>Bottles chosen</span>
+            <span><strong id="go-progress-n">0</strong> / <strong id="go-progress-total">2</strong></span>
+          </div>
+          <div class="go-progress-bar-bg">
+            <div class="go-progress-bar-fill" id="go-progress-fill"></div>
+          </div>
+        </div>
+
         <div class="go-scent-grid" id="go-scent-grid"></div>
         <div class="go-modal-footer">
-          <span id="go-selection-count" class="go-sel-count">0 selected</span>
+          <span id="go-selection-count" class="go-sel-count">0 of 2 selected</span>
           <button class="go-confirm-btn" id="go-confirm-btn" type="button" disabled>
             Add to cart
           </button>
@@ -455,6 +467,38 @@
     margin-top: 0;
   }
 
+  .go-progress-wrap {
+    margin-bottom: 22px;
+  }
+
+  .go-progress-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    color: #aaa;
+    margin-bottom: 8px;
+  }
+
+  .go-progress-label strong {
+    color: var(--go-dark);
+    font-weight: 700;
+  }
+
+  .go-progress-bar-bg {
+    height: 6px;
+    background: #f0ebe3;
+    border-radius: 999px;
+    overflow: hidden;
+  }
+
+  .go-progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--go-gold), #ddb93e);
+    border-radius: 999px;
+    transition: width 0.3s ease;
+    width: 0%;
+  }
+
   .go-scent-grid {
     display: flex;
     flex-direction: column;
@@ -469,29 +513,17 @@
     border: 2px solid #eee;
     border-radius: 12px;
     padding: 14px 18px;
-    cursor: pointer;
     transition: border-color 0.15s, background 0.15s;
     background: none;
   }
 
-  .go-scent-item:has(input:checked) {
+  .go-scent-item.has-qty {
     border-color: var(--go-gold);
     background: #fdf9f0;
   }
 
   .go-scent-item--unavailable {
     opacity: 0.5;
-    cursor: not-allowed;
-  }
-
-  .go-scent-check {
-    accent-color: var(--go-gold);
-    width: 18px;
-    height: 18px;
-    flex-shrink: 0;
-  }
-
-  .go-scent-check:disabled {
     cursor: not-allowed;
   }
 
@@ -507,13 +539,16 @@
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
   }
 
-  .go-scent-item:has(input:checked) .go-scent-image {
+  .go-scent-item.has-qty .go-scent-image {
     border-color: var(--go-gold);
     box-shadow: 0 4px 12px rgba(201, 168, 76, 0.2);
   }
 
-  .go-scent-name {
+  .go-scent-info {
     flex: 1;
+  }
+
+  .go-scent-name {
     font-weight: 600;
     font-size: 14px;
   }
@@ -521,6 +556,58 @@
   .go-scent-variant {
     font-size: 12px;
     color: #bbb;
+  }
+
+  .go-stepper {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    border: 1.5px solid #e0d8c8;
+    border-radius: 8px;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+
+  .go-stepper-btn {
+    width: 34px;
+    height: 34px;
+    border: none;
+    background: #f5f0e8;
+    color: #666;
+    font-size: 18px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s, color 0.15s;
+    user-select: none;
+    line-height: 1;
+  }
+
+  .go-stepper-btn:hover:not(:disabled) {
+    background: var(--go-gold);
+    color: #fff;
+  }
+
+  .go-stepper-btn:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+  }
+
+  .go-stepper-val {
+    width: 34px;
+    text-align: center;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--go-dark);
+    background: #fff;
+    border-left: 1.5px solid #e0d8c8;
+    border-right: 1.5px solid #e0d8c8;
+    height: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   .go-modal-footer {
@@ -571,12 +658,6 @@
     background: rgba(211, 47, 47, 0.08);
     border-radius: 6px;
     border-left: 3px solid #d32f2f;
-  }
-
-  @media (min-width: 720px) and (max-width: 899px) {
-    .great-offer-section .go-cards {
-      gap: 15px;
-    }
   }
 
   @media (max-width: 720px) {
@@ -664,6 +745,24 @@
       letter-spacing: .3px;
       padding: 6px 6px;
       margin-bottom: 0px;
+    }
+    .go-modal-box {
+      padding: 30px 25px 35px;
+    }
+    .go-scent-item {
+      gap: 10px;
+      padding: 14px 12px;
+    }
+    .go-scent-name {font-size: 12px; line-height: 1.4;}
+    .go-stepper-btn {
+      width: 26px;
+      height: 30px;
+      font-size: 16px;
+    }
+    .go-stepper-val {
+      width: 30px;
+      height: 30px;
+      font-size: 13px;
     }
   }
 {% endstylesheet %}

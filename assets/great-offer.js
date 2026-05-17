@@ -62,26 +62,21 @@
     const grid = safeQS('#go-scent-grid');
     const title = safeQS('#go-modal-title');
     const subtitle = safeQS('#go-modal-subtitle');
+    const progressTotal = safeQS('#go-progress-total');
 
     if (!grid || !title || !subtitle) return;
 
     grid.innerHTML = '';
 
     state.scents.forEach((scent) => {
-      const label = document.createElement('label');
-      label.className = 'go-scent-item';
+      const item = document.createElement('div');
+      item.className = 'go-scent-item';
+      // @ts-ignore
+      item.dataset.variantId = scent.id;
       // @ts-ignore
       if (!scent.available) {
-        label.classList.add('go-scent-item--unavailable');
+        item.classList.add('go-scent-item--unavailable');
       }
-
-      const input = document.createElement('input');
-      input.type = 'checkbox';
-      input.className = 'go-scent-check';
-      // @ts-ignore
-      input.dataset.variantId = scent.id;
-      // @ts-ignore
-      input.disabled = !scent.available;
 
       const imageImg = document.createElement('img');
       imageImg.className = 'go-scent-image';
@@ -90,58 +85,136 @@
       // @ts-ignore
       imageImg.alt = scent.title;
 
-      const nameSpan = document.createElement('span');
+      const infoDiv = document.createElement('div');
+      infoDiv.className = 'go-scent-info';
+
+      const nameSpan = document.createElement('div');
       nameSpan.className = 'go-scent-name';
       // @ts-ignore
       nameSpan.textContent = scent.title;
 
-      label.appendChild(input);
-      label.appendChild(imageImg);
-      label.appendChild(nameSpan);
-      grid.appendChild(label);
+      const variantSpan = document.createElement('div');
+      variantSpan.className = 'go-scent-variant';
+      // @ts-ignore
+      variantSpan.textContent = state.sizeLabel;
 
-      input.addEventListener('change', handleCheckboxChange);
+      infoDiv.appendChild(nameSpan);
+      infoDiv.appendChild(variantSpan);
+
+      const stepperDiv = document.createElement('div');
+      stepperDiv.className = 'go-stepper';
+
+      const minusBtn = document.createElement('button');
+      minusBtn.className = 'go-stepper-btn go-minus';
+      minusBtn.type = 'button';
+      minusBtn.textContent = '−';
+      minusBtn.disabled = !scent.available;
+
+      const valSpan = document.createElement('div');
+      valSpan.className = 'go-stepper-val';
+      valSpan.textContent = '0';
+
+      const plusBtn = document.createElement('button');
+      plusBtn.className = 'go-stepper-btn go-plus';
+      plusBtn.type = 'button';
+      plusBtn.textContent = '+';
+      plusBtn.disabled = !scent.available;
+
+      stepperDiv.appendChild(minusBtn);
+      stepperDiv.appendChild(valSpan);
+      stepperDiv.appendChild(plusBtn);
+
+      item.appendChild(imageImg);
+      item.appendChild(infoDiv);
+      item.appendChild(stepperDiv);
+      grid.appendChild(item);
+
+      minusBtn.addEventListener('click', () => handleStepperChange(item, -1));
+      plusBtn.addEventListener('click', () => handleStepperChange(item, 1));
     });
 
+    if (progressTotal) {
+      progressTotal.textContent = state.qty;
+    }
     title.textContent = `Choose your ${state.qty} × ${state.sizeLabel} bottles`;
-    subtitle.textContent = `Select exactly ${state.qty} scents from the list below.`;
+    subtitle.textContent = `Use + and − to pick your scents. You can choose ${state.qty} of the same if you like.`;
+  }
+
+  function getTotalQuantity() {
+    let total = 0;
+    safeQSA('#go-scent-grid .go-stepper-val').forEach((val) => {
+      total += parseInt(val.textContent) || 0;
+    });
+    return total;
   }
 
   // @ts-ignore
-  function handleCheckboxChange(e) {
-    const checked = safeQSA('#go-scent-grid .go-scent-check:checked');
-    if (checked.length > state.qty) {
-      e.target.checked = false;
-      return;
+  function handleStepperChange(item, direction) {
+    const valSpan = item.querySelector('.go-stepper-val');
+    if (!valSpan) return;
+
+    const currentVal = parseInt(valSpan.textContent) || 0;
+    const newVal = Math.max(0, currentVal + direction);
+    valSpan.textContent = newVal;
+
+    if (newVal > 0) {
+      item.classList.add('has-qty');
+    } else {
+      item.classList.remove('has-qty');
     }
+
     updateSelectionCount();
   }
 
   function updateSelectionCount() {
-    const checked = safeQSA('#go-scent-grid .go-scent-check:checked');
+    const total = getTotalQuantity();
     const countEl = safeQS('#go-selection-count');
     const btnEl = safeQS('#go-confirm-btn');
+    const progressN = safeQS('#go-progress-n');
+    const progressFill = safeQS('#go-progress-fill');
 
     if (!countEl || !btnEl) return;
 
-    const n = checked.length;
-    countEl.textContent = `${n} of ${state.qty} selected`;
-    btnEl.disabled = n !== state.qty;
+    countEl.textContent = `${total} of ${state.qty} selected`;
+    btnEl.disabled = total !== state.qty;
+
+    if (progressN) {
+      progressN.textContent = total;
+    }
+
+    if (progressFill && state.qty > 0) {
+      const percentage = Math.min(100, (total / state.qty) * 100);
+      progressFill.style.width = percentage + '%';
+    }
+
+    // Disable all + buttons when limit reached
+    safeQSA('#go-scent-grid .go-plus').forEach((btn) => {
+      const item = btn.closest('.go-scent-item');
+      // @ts-ignore
+      btn.disabled = total >= state.qty || !item.dataset.variantId;
+    });
   }
 
   function handleConfirm() {
     const btnEl = safeQS('#go-confirm-btn');
     if (!btnEl) return;
 
-    const checked = safeQSA('#go-scent-grid .go-scent-check:checked');
-    if (checked.length !== state.qty) {
+    const total = getTotalQuantity();
+    if (total !== state.qty) {
       return;
     }
 
-    const items = Array.from(checked).map((input) => ({
-      id: parseInt(input.dataset.variantId, 10),
-      quantity: 1
-    }));
+    const items = [];
+    safeQSA('#go-scent-grid .go-scent-item').forEach((item) => {
+      const qty = parseInt(item.querySelector('.go-stepper-val').textContent) || 0;
+      if (qty > 0) {
+        // @ts-ignore
+        items.push({
+          id: parseInt(item.dataset.variantId, 10),
+          quantity: qty
+        });
+      }
+    });
 
     const cartComponents = safeQSA('cart-items-component[data-section-id]');
     const sectionIds = Array.from(cartComponents).map(
@@ -188,7 +261,7 @@
 
         closeModal();
         setTimeout(() => {
-          dispatchCartAddEvent(items.length, data.sections || sectionIds);
+          dispatchCartAddEvent(state.qty, data.sections || sectionIds);
         }, 400);
         resetButton(btnEl, originalText);
       })
