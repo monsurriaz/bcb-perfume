@@ -1,0 +1,569 @@
+<!-- Shopify Custom HTML Block: Pricing Cards with Scent Selector Modal -->
+<style>
+  /* ── Pricing Cards (NUMBER 1 — unchanged) ───────────────────────────── */
+  .pricing-section {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: stretch;
+    gap: 28px;
+    padding: 40px 24px;
+    background: #ffffff;
+    box-sizing: border-box;
+    max-width: 960px;
+    margin: 0 auto;
+  }
+
+  .pricing-card {
+    background: #ffffff;
+    border: 3px solid #e8e0d4;
+    border-radius: 28px;
+    padding: 32px 28px 28px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    flex: 1;
+    min-width: 0;
+    box-sizing: border-box;
+  }
+
+  .pricing-card__title {
+    font-size: 24px;
+    font-weight: 400;
+    color: #111111;
+    margin: 0 0 16px;
+    letter-spacing: -0.3px;
+  }
+
+  .pricing-card__title strong {
+    font-weight: 800;
+  }
+
+  .pricing-card__badge {
+    display: inline-block;
+    padding: 7px 18px;
+    border-radius: 50px;
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 20px;
+    letter-spacing: 0.1px;
+  }
+
+  .pricing-card__badge--beige {
+    background: #ede7dc;
+    color: #7a7060;
+    border: 1.5px solid #ddd4c6;
+  }
+
+  .pricing-card__badge--red {
+    background: #d62b2b;
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 15px;
+    letter-spacing: 0.2px;
+  }
+
+  .pricing-card__receive {
+    font-size: 16px;
+    font-weight: 700;
+    color: #111111;
+    margin: 0 0 auto;
+    padding-bottom: 32px;
+    line-height: 1.4;
+  }
+
+  .pricing-card__receive span {
+    color: #2cb84b;
+    font-weight: 700;
+  }
+
+  /* Button is now a <button> element — keep identical visual to the original <a> */
+  .pricing-card__button {
+    display: block;
+    width: 100%;
+    background: #111111;
+    color: #ffffff;
+    font-size: 18px;
+    font-weight: 700;
+    text-align: center;
+    padding: 20px 24px;
+    border-radius: 50px;
+    text-decoration: none;
+    letter-spacing: 0.1px;
+    box-sizing: border-box;
+    margin-bottom: 20px;
+    line-height: 1;
+    /* reset native button styles */
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+  }
+
+  .pricing-card__button:hover {
+    background: #333333;
+  }
+
+  .pricing-card__per-ml {
+    font-size: 17px;
+    font-weight: 700;
+    color: #111111;
+    margin: 0;
+    letter-spacing: -0.2px;
+  }
+
+  /* Responsive: stack on mobile */
+  @media (max-width: 680px) {
+    .pricing-section {
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+      padding: 24px 16px;
+    }
+
+    .pricing-card {
+      width: 100%;
+      max-width: 360px;
+    }
+  }
+
+  /* ── Modal (NUMBER 2 — unchanged) ───────────────────────────────────── */
+  :root {
+    --go-gold: #c9a84c;
+    --go-dark: #1a1a1a;
+  }
+
+  .go-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(10, 8, 5, 0.72);
+    z-index: 9999;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    backdrop-filter: blur(4px);
+  }
+  .go-modal.active { display: flex; }
+
+  .go-modal-box {
+    background: #fff;
+    border-radius: 20px;
+    padding: 36px;
+    max-width: 540px;
+    width: 100%;
+    max-height: 88vh;
+    overflow-y: auto;
+    position: relative;
+    box-shadow: 0 32px 80px rgba(0, 0, 0, 0.3);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+  }
+
+  .go-modal-close {
+    position: absolute;
+    top: 18px;
+    right: 18px;
+    background: #f5f0e8;
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    font-size: 16px;
+    cursor: pointer;
+    color: #888;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+  }
+  .go-modal-close:hover { background: #e8e0d5; }
+
+  .go-modal-box h3 {
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: #111;
+    margin: 0 0 6px;
+    padding-right: 36px;
+  }
+
+  .go-modal-sub {
+    color: #999;
+    font-size: 14px;
+    margin-bottom: 22px;
+  }
+
+  /* Progress bar */
+  .go-progress-wrap { margin-bottom: 22px; }
+
+  .go-progress-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    color: #aaa;
+    margin-bottom: 8px;
+  }
+  .go-progress-label strong { color: #111; font-weight: 700; }
+
+  .go-progress-bar-bg {
+    height: 6px;
+    background: #f0ebe3;
+    border-radius: 999px;
+    overflow: hidden;
+  }
+  .go-progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #c9a84c, #ddb93e);
+    border-radius: 999px;
+    transition: width 0.3s ease;
+    width: 0%;
+  }
+
+  /* Scent rows */
+  .go-scent-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 24px;
+  }
+
+  .go-scent-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    border: 2px solid #eee;
+    border-radius: 12px;
+    padding: 14px 18px;
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .go-scent-item.has-qty {
+    border-color: #c9a84c;
+    background: #fdf9f0;
+  }
+
+  .go-scent-info { flex: 1; }
+  .go-scent-name { font-weight: 600; font-size: 14px; color: #111; }
+  .go-scent-variant { font-size: 12px; color: #bbb; }
+
+  /* Stepper */
+  .go-stepper {
+    display: flex;
+    align-items: center;
+    border: 1.5px solid #e0d8c8;
+    border-radius: 8px;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+  .go-stepper-btn {
+    width: 34px;
+    height: 34px;
+    border: none;
+    background: #f5f0e8;
+    color: #666;
+    font-size: 18px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s, color 0.15s;
+    user-select: none;
+    line-height: 1;
+  }
+  .go-stepper-btn:hover:not(:disabled) {
+    background: #c9a84c;
+    color: #fff;
+  }
+  .go-stepper-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+
+  .go-stepper-val {
+    width: 34px;
+    text-align: center;
+    font-size: 15px;
+    font-weight: 700;
+    color: #1a1a1a;
+    background: #fff;
+    border-left: 1.5px solid #e0d8c8;
+    border-right: 1.5px solid #e0d8c8;
+    height: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Modal footer */
+  .go-modal-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-top: 1px solid #eee;
+    padding-top: 20px;
+  }
+  .go-sel-count { font-size: 13px; color: #aaa; }
+
+  .go-confirm-btn {
+    background: linear-gradient(135deg, #c9a84c, #ddb93e);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 13px 28px;
+    font-size: 15px;
+    cursor: pointer;
+    font-family: inherit;
+    font-weight: 600;
+    transition: opacity 0.2s, transform 0.1s;
+    box-shadow: 0 4px 16px rgba(201, 168, 76, 0.3);
+  }
+  .go-confirm-btn:disabled { opacity: 0.35; cursor: not-allowed; box-shadow: none; }
+  .go-confirm-btn:not(:disabled):hover { opacity: 0.9; transform: translateY(-1px); }
+</style>
+
+<!-- ── Pricing Cards ──────────────────────────────────────────────────── -->
+<div class="pricing-section">
+
+  <!-- Card 1: 20ml -->
+  <div class="pricing-card">
+    <p class="pricing-card__title">20ml <strong>£13.99</strong></p>
+    <span class="pricing-card__badge pricing-card__badge--beige">Buy 1 Get 1 Free</span>
+    <p class="pricing-card__receive">You receive <span>x2 20ml</span> bottles</p>
+    <button
+      class="pricing-card__button"
+      onclick="goStartFlow('20ml', 2, 'VARIANT_ID_20ML')"
+    >Choose your 2 &rarr;</button>
+    <p class="pricing-card__per-ml">£0.35/ml</p>
+  </div>
+
+  <!-- Card 2: 30ml -->
+  <div class="pricing-card">
+    <p class="pricing-card__title">30ml <strong>£19</strong></p>
+    <span class="pricing-card__badge pricing-card__badge--beige">Buy 1 Get 1 Free</span>
+    <p class="pricing-card__receive">You receive <span>x2 30ml</span> bottles</p>
+    <button
+      class="pricing-card__button"
+      onclick="goStartFlow('30ml', 2, 'VARIANT_ID_30ML')"
+    >Choose your 2 &rarr;</button>
+    <p class="pricing-card__per-ml">£0.32/ml</p>
+  </div>
+
+  <!-- Card 3: 50ml -->
+  <div class="pricing-card">
+    <p class="pricing-card__title">50ml <strong>£22.99</strong></p>
+    <span class="pricing-card__badge pricing-card__badge--red">Buy 1 Get 2 FREE!</span>
+    <p class="pricing-card__receive">You receive <span>x3 50ml</span> bottles</p>
+    <button
+      class="pricing-card__button"
+      onclick="goStartFlow('50ml', 3, 'VARIANT_ID_50ML')"
+    >Choose your 3 &rarr;</button>
+    <p class="pricing-card__per-ml">£0.15/ml</p>
+  </div>
+
+</div>
+
+<!-- ── Scent Selector Modal ───────────────────────────────────────────── -->
+<div class="go-modal" id="go-modal">
+  <div class="go-modal-box">
+    <button class="go-modal-close" onclick="goCloseModal()">&#x2715;</button>
+    <h3 id="go-modal-title">Choose your bottles</h3>
+    <p id="go-modal-subtitle" class="go-modal-sub"></p>
+
+    <!-- Progress bar -->
+    <div class="go-progress-wrap">
+      <div class="go-progress-label">
+        <span>Bottles chosen</span>
+        <span>
+          <strong id="go-progress-n">0</strong>
+          &nbsp;/&nbsp;
+          <strong id="go-progress-total">2</strong>
+        </span>
+      </div>
+      <div class="go-progress-bar-bg">
+        <div class="go-progress-bar-fill" id="go-progress-fill"></div>
+      </div>
+    </div>
+
+    <!-- Scent list -->
+    <div class="go-scent-grid" id="go-scent-grid">
+
+      <div class="go-scent-item" data-scent="Black Orchid">
+        <div class="go-scent-info">
+          <div class="go-scent-name">Black Orchid</div>
+          <div class="go-scent-variant">Dark floral</div>
+        </div>
+        <div class="go-stepper">
+          <button class="go-stepper-btn go-minus" type="button">&#x2212;</button>
+          <div class="go-stepper-val">0</div>
+          <button class="go-stepper-btn go-plus" type="button">+</button>
+        </div>
+      </div>
+
+      <div class="go-scent-item" data-scent="Oud Saffron">
+        <div class="go-scent-info">
+          <div class="go-scent-name">Oud Saffron</div>
+          <div class="go-scent-variant">Warm oriental</div>
+        </div>
+        <div class="go-stepper">
+          <button class="go-stepper-btn go-minus" type="button">&#x2212;</button>
+          <div class="go-stepper-val">0</div>
+          <button class="go-stepper-btn go-plus" type="button">+</button>
+        </div>
+      </div>
+
+      <div class="go-scent-item" data-scent="Citrus Noir">
+        <div class="go-scent-info">
+          <div class="go-scent-name">Citrus Noir</div>
+          <div class="go-scent-variant">Fresh &amp; sharp</div>
+        </div>
+        <div class="go-stepper">
+          <button class="go-stepper-btn go-minus" type="button">&#x2212;</button>
+          <div class="go-stepper-val">0</div>
+          <button class="go-stepper-btn go-plus" type="button">+</button>
+        </div>
+      </div>
+
+      <div class="go-scent-item" data-scent="Rose Amber">
+        <div class="go-scent-info">
+          <div class="go-scent-name">Rose Amber</div>
+          <div class="go-scent-variant">Soft &amp; feminine</div>
+        </div>
+        <div class="go-stepper">
+          <button class="go-stepper-btn go-minus" type="button">&#x2212;</button>
+          <div class="go-stepper-val">0</div>
+          <button class="go-stepper-btn go-plus" type="button">+</button>
+        </div>
+      </div>
+
+      <div class="go-scent-item" data-scent="Cedar &amp; Smoke">
+        <div class="go-scent-info">
+          <div class="go-scent-name">Cedar &amp; Smoke</div>
+          <div class="go-scent-variant">Woody &amp; bold</div>
+        </div>
+        <div class="go-stepper">
+          <button class="go-stepper-btn go-minus" type="button">&#x2212;</button>
+          <div class="go-stepper-val">0</div>
+          <button class="go-stepper-btn go-plus" type="button">+</button>
+        </div>
+      </div>
+
+      <div class="go-scent-item" data-scent="Vanilla Musk">
+        <div class="go-scent-info">
+          <div class="go-scent-name">Vanilla Musk</div>
+          <div class="go-scent-variant">Sweet &amp; clean</div>
+        </div>
+        <div class="go-stepper">
+          <button class="go-stepper-btn go-minus" type="button">&#x2212;</button>
+          <div class="go-stepper-val">0</div>
+          <button class="go-stepper-btn go-plus" type="button">+</button>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="go-modal-footer">
+      <span id="go-selection-count" class="go-sel-count">0 of 2 selected</span>
+      <button class="go-confirm-btn" id="go-confirm-btn" disabled>Add to cart</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  (function () {
+    var goCurrentQty = 0;
+    var goCurrentVariant = '';
+    var goCurrentSize = '';
+
+    // Expose to inline onclick handlers
+    window.goStartFlow = function (size, qty, variant) {
+      goCurrentQty = qty;
+      goCurrentVariant = variant;
+      goCurrentSize = size;
+
+      document.getElementById('go-modal-title').textContent =
+        'Choose your ' + qty + ' \u00d7 ' + size + ' bottles';
+      document.getElementById('go-modal-subtitle').textContent =
+        'Use + and \u2212 to pick your scents. You can choose ' + qty + ' of the same if you like.';
+      document.getElementById('go-progress-total').textContent = qty;
+
+      // Reset all steppers
+      document.querySelectorAll('.go-scent-item').forEach(function (item) {
+        item.querySelector('.go-stepper-val').textContent = '0';
+        item.classList.remove('has-qty');
+      });
+
+      updateCount();
+      document.getElementById('go-modal').classList.add('active');
+      document.body.style.overflow = 'hidden';
+    };
+
+    window.goCloseModal = function () {
+      document.getElementById('go-modal').classList.remove('active');
+      document.body.style.overflow = '';
+    };
+
+    function getTotal() {
+      var total = 0;
+      document.querySelectorAll('.go-stepper-val').forEach(function (v) {
+        total += parseInt(v.textContent) || 0;
+      });
+      return total;
+    }
+
+    function updateCount() {
+      var n = getTotal();
+      document.getElementById('go-selection-count').textContent =
+        n + ' of ' + goCurrentQty + ' selected';
+      document.getElementById('go-progress-n').textContent = n;
+      var pct = goCurrentQty > 0 ? Math.min(100, (n / goCurrentQty) * 100) : 0;
+      document.getElementById('go-progress-fill').style.width = pct + '%';
+      document.getElementById('go-confirm-btn').disabled = (n !== goCurrentQty);
+
+      // Disable all + buttons when limit reached
+      document.querySelectorAll('.go-stepper-btn.go-plus').forEach(function (btn) {
+        btn.disabled = (n >= goCurrentQty);
+      });
+    }
+
+    // Wire up steppers
+    document.querySelectorAll('.go-scent-item').forEach(function (item) {
+      var minus = item.querySelector('.go-minus');
+      var plus  = item.querySelector('.go-plus');
+      var val   = item.querySelector('.go-stepper-val');
+
+      plus.addEventListener('click', function () {
+        var cur = parseInt(val.textContent) || 0;
+        if (getTotal() >= goCurrentQty) return;
+        val.textContent = cur + 1;
+        item.classList.add('has-qty');
+        updateCount();
+      });
+
+      minus.addEventListener('click', function () {
+        var cur = parseInt(val.textContent) || 0;
+        if (cur <= 0) return;
+        val.textContent = cur - 1;
+        if (cur - 1 === 0) item.classList.remove('has-qty');
+        updateCount();
+      });
+    });
+
+    // Confirm / Add to cart
+    document.getElementById('go-confirm-btn').addEventListener('click', function () {
+      var selections = [];
+      document.querySelectorAll('.go-scent-item').forEach(function (item) {
+        var qty = parseInt(item.querySelector('.go-stepper-val').textContent) || 0;
+        if (qty > 0) {
+          selections.push({ scent: item.dataset.scent, qty: qty });
+        }
+      });
+      console.log('Order:', { variant: goCurrentVariant, size: goCurrentSize, selections: selections });
+      // Replace the alert below with your Shopify add-to-cart logic
+      alert('Added to cart!\n\n' + selections.map(function (s) {
+        return s.qty + '\u00d7 ' + s.scent;
+      }).join('\n'));
+      goCloseModal();
+    });
+
+    // Close on backdrop click
+    document.getElementById('go-modal').addEventListener('click', function (e) {
+      if (e.target === this) goCloseModal();
+    });
+  })();
+</script>

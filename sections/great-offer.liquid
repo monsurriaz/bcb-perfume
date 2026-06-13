@@ -54,6 +54,13 @@
             {%- endfor -%}
 
             {%- assign scents_json = '[' | append: scents_json_parts | append: ']' -%}
+            {%- assign card_image = block.settings.card_image | default: size_variant.featured_image | default: price_product.featured_image -%}
+            {%- assign bottle_size_class = 'go-card-bottles--medium' -%}
+            {%- if block.settings.size_label contains '20' -%}
+              {%- assign bottle_size_class = 'go-card-bottles--small' -%}
+            {%- elsif block.settings.size_label contains '50' -%}
+              {%- assign bottle_size_class = 'go-card-bottles--large' -%}
+            {%- endif -%}
 
             <div
               class="go-card{% if is_featured %} go-card--best{% endif %}"
@@ -63,46 +70,69 @@
               data-block-id="{{ block.id }}"
               {{ block.shopify_attributes }}
             >
-              {%- if is_featured -%}
-                <div class="go-best-label">
-                  <span class="go-best-text-desktop">{{ block.settings.best_value_text }}</span>
-                  <span class="go-best-text-mobile">{{ block.settings.best_value_text_mobile }}</span>
+              <div class="go-card__inner">
+                {%- if is_featured -%}
+                  <div class="go-best-label">
+                    <span class="go-best-text-desktop">{{ block.settings.best_value_text }}</span>
+                    <span class="go-best-text-mobile">{{ block.settings.best_value_text_mobile }}</span>
+                  </div>
+                {%- endif -%}
+  
+                <div class="go-card-title">
+                  <span>{{ block.settings.size_option_value }}</span>
+                  <strong>{{ size_variant.price | money }}</strong>
                 </div>
-              {%- endif -%}
-
-              <div class="go-size-badge">{{ block.settings.size_label }}</div>
-              <div class="go-price">{{ size_variant.price | money }}</div>
-              <div class="go-deal-tag{% if is_featured %} go-deal-tag--big{% endif %}">
-                {{ block.settings.deal_tag_text }}
-              </div>
-
-              <div class="go-divider"></div>
-
-              <div class="go-stat-row">
-                <span>Bottles included</span>
-                <span>× {{ qty }}</span>
-              </div>
-
-              <div class="go-ppm-row">
-                <span class="go-ppm-label">{{ block.settings.per_ml_label }}</span>
-                <span class="go-ppm-value{% if is_featured %} go-ppm-value--best{% endif %}">
-                  {{ block.settings.per_ml_value }}
-                </span>
+                <div class="go-deal-tag{% if is_featured %} go-deal-tag--big{% endif %}">
+                  {{ block.settings.deal_tag_text }}
+                </div>
+  
+                <div class="go-receive-line">
+                  You receive <span>x{{ qty }} {{ block.settings.size_option_value }}</span> bottles
+                </div>
+  
+                <div class="go-stat-row" hidden>
+                  <span>Bottles included</span>
+                  <span>× {{ qty }}</span>
+                </div>
+  
+                <div class="go-card-bottles {{ bottle_size_class }}">
+                  {%- if card_image != blank -%}
+                    {%- for index in (1..qty) -%}
+                      <img
+                        class="go-card-bottle"
+                        src="{{ card_image | image_url: width: 240 }}"
+                        alt="{{ price_product.title | escape }} {{ block.settings.size_label | escape }} bottle"
+                        loading="lazy"
+                        width="120"
+                        height="160"
+                      >
+                    {%- endfor -%}
+                  {%- endif -%}
+                </div>
+  
+                <div class="go-ppm-row">
+                  <span class="go-ppm-label">{{ block.settings.per_ml_label }}</span>
+                  <span class="go-ppm-value{% if is_featured %} go-ppm-value--best{% endif %}">
+                    {{ block.settings.per_ml_value }}
+                  </span>
+                </div>
+  
+                <button
+                  class="go-btn{% if is_featured %} go-btn--best{% endif %}"
+                  type="button"
+                  data-action="go-start-flow"
+                >
+                  <span class="go-btn-text">{{ block.settings.btn_text }}</span>
+                  <span class="go-btn-mobile-text">{{ block.settings.btn_text_mobile }}</span>
+                </button>
               </div>
 
               {%- if is_featured and block.settings.saving_text != blank -%}
                 <div class="go-saving">{{ block.settings.saving_text }}</div>
               {%- endif -%}
 
-              <button
-                class="go-btn{% if is_featured %} go-btn--best{% endif %}"
-                type="button"
-                data-action="go-start-flow"
-              >
-                <span class="go-btn-text">{{ block.settings.btn_text }}</span>
-                <span class="go-btn-mobile-text">{{ block.settings.btn_text_mobile }}</span>
-              </button>
             </div>
+            
           {%- endif -%}
         {%- endif -%}
       {%- endfor -%}
@@ -151,7 +181,7 @@
   }
 
   .go-inner {
-    max-width: 1080px;
+    max-width: 1200px;
     margin: 0 auto;
   }
 
@@ -195,7 +225,7 @@
     align-items: center;
   }
 
-  .go-card {
+  .go-card .go-card__inner {
     background: #fff;
     border-radius: var(--go-radius);
     border: 2px solid #e8e0d5;
@@ -203,15 +233,21 @@
     text-align: center;
     transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1),
       box-shadow 0.25s;
-    position: relative;
   }
 
   .go-card:hover {
+    
+  }
+  .go-card__inner:hover {
     transform: translateY(-6px);
     box-shadow: 0 16px 40px rgba(0, 0, 0, 0.08);
   }
 
   .go-card--best {
+    
+  }
+
+  .go-card--best .go-card__inner {
     background: var(--go-dark);
     border: 2px solid var(--go-gold);
     color: #fff;
@@ -223,6 +259,10 @@
   }
 
   .go-card--best:hover {
+    
+  }
+
+  .go-card--best .go-card__inner {
     transform: scale(1.04) translateY(-6px);
     box-shadow: 0 28px 72px rgba(201, 168, 76, 0.28),
       0 4px 20px rgba(0, 0, 0, 0.22);
@@ -765,6 +805,360 @@
       font-size: 13px;
     }
   }
+
+  .great-offer-section .go-cards {
+    gap: 28px;
+    align-items: stretch;
+  }
+
+  .great-offer-section .go-card {
+
+  }
+
+  .great-offer-section .go-card .go-card__inner {
+    border: 6px solid #e8e0d4;
+    border-radius: 28px;
+    padding: 32px 28px 28px;
+    min-height: 510px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: #fff;
+    color: #111;
+    box-shadow: none;
+    transform: none;
+  }
+
+  .great-offer-section .go-card .go-card__inner:hover,
+  .great-offer-section .go-card--best .go-card__inner:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 18px 46px rgba(0, 0, 0, 0.07);
+  }
+
+  .great-offer-section .go-card--best {}
+
+  .great-offer-section .go-card--best .go-card__inner {
+    border-color: #e8e0d4;
+    background: #fff;
+    color: #111;
+    padding-top: 32px;
+    box-shadow: none;
+    transform: none;
+    position: relative;
+  }
+
+  .great-offer-section .go-best-label {
+    top: -40px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: transparent;
+    color: #050505;
+    box-shadow: none;
+    border-radius: 0;
+    padding: 0;
+    font-size: 20px;
+    line-height: 1.1;
+    font-weight: 700;
+    font-style: italic;
+    letter-spacing: 0;
+    text-transform: none;
+  }
+
+  .great-offer-section .go-card-title {
+    order: 1;
+    font-size: 25px;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    color: #050505;
+    margin-bottom: 20px;
+  }
+
+  .great-offer-section .go-card-title span {
+    font-weight: 400;
+  }
+
+  .great-offer-section .go-card-title strong {
+    font-weight: 800;
+  }
+
+  .great-offer-section .go-deal-tag {
+    order: 2;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 45px;
+    padding: 8px 20px;
+    margin: 0 0 25px;
+    border: 1.5px solid #ddd4c6;
+    border-radius: 999px;
+    background: #ede7dc;
+    color: #7a7060;
+    font-size: 18px;
+    line-height: 1.1;
+    font-weight: 600;
+    letter-spacing: 0;
+  }
+
+  .great-offer-section .go-deal-tag--big {
+    background: #ef2418;
+    border-color: #ef2418;
+    color: #fff;
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+
+  .great-offer-section .go-receive-line {
+    order: 3;
+    font-size: 18px;
+    line-height: 1.25;
+    font-weight: 700;
+    color: #050505;
+    margin-bottom: 25px;
+    white-space: nowrap;
+  }
+
+  .great-offer-section .go-receive-line span {
+    color: #18ad18;
+  }
+
+  .great-offer-section .go-card-bottles {
+    order: 4;
+    min-height: 185px;
+    width: 100%;
+    max-width: 100%;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    margin: auto 0 5px;
+    overflow: hidden;
+  }
+
+  .great-offer-section .go-card-bottle {
+    display: block;
+    flex: 0 1 auto;
+    width: min(30%, 92px);
+    max-width: 100%;
+    height: auto;
+    object-fit: contain;
+    object-position: center bottom;
+    margin-inline: 2px;
+  }
+
+  .great-offer-section .go-card-bottles--small .go-card-bottle {
+    width: min(29%, 75px);
+    margin-inline: 4px;
+  }
+
+  .great-offer-section .go-card-bottles--medium .go-card-bottle {
+    width: min(31%, 90px);
+  }
+
+  .great-offer-section .go-card-bottles--large .go-card-bottle {
+    width: min(33%, 120px);
+  }
+
+  .great-offer-section .go-btn {
+    order: 5;
+    width: 100%;
+    min-height: 60px;
+    padding: 20px 24px;
+    margin: 0 0 22px;
+    border-radius: 999px;
+    background: #050505;
+    color: #fff;
+    font-size: 20px;
+    line-height: 1;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    box-shadow: none;
+  }
+
+  .great-offer-section .go-btn:hover,
+  .great-offer-section .go-btn--best:hover {
+    background: #222;
+    transform: none;
+  }
+
+  .great-offer-section .go-btn--best {
+    background: #050505;
+    color: #fff;
+    box-shadow: none;
+  }
+
+  .great-offer-section .go-ppm-row {
+    order: 6;
+    justify-content: center;
+    margin: 0;
+  }
+
+  .great-offer-section .go-ppm-label {
+    display: none;
+  }
+
+  .great-offer-section .go-ppm-value,
+  .great-offer-section .go-ppm-value--best {
+    font-family: inherit;
+    font-size: 20px;
+    line-height: 1;
+    font-weight: 700;
+    color: #050505;
+  }
+
+  .great-offer-section .go-ppm-value::after {
+    content: "/ml";
+    font-weight: 700;
+  }
+
+  .great-offer-section .go-saving {
+    order: 7;
+    width: 100%;
+    margin: 22px 0 0;
+    padding: 0 10px;
+    background: transparent;
+    border-radius: 0;
+    color: #ef2418;
+    font-size: clamp(16px, 1.7vw, 21px);
+    line-height: 1.15;
+    font-weight: 500;
+    letter-spacing: 0;
+    text-align: center;
+    overflow-wrap: anywhere;
+  }
+
+  .great-offer-section .go-divider,
+  .great-offer-section .go-stat-row {
+    display: none;
+  }
+
+  @media (max-width: 990px) {
+    .great-offer-section .go-cards {
+      gap: 20px;
+    }
+
+    .great-offer-section .go-card {
+      min-height: 440px;
+      padding: 28px 22px 24px;
+    }
+
+    .great-offer-section .go-card .go-card__inner {
+      min-height: 440px;
+      padding: 28px 22px 24px;
+    }
+
+    .great-offer-section .go-card-title {
+      font-size: 28px;
+    }
+
+    .great-offer-section .go-deal-tag {
+      font-size: 16px;
+      min-height: 44px;
+      margin-bottom: 24px;
+    }
+
+    .great-offer-section .go-receive-line {
+      font-size: 18px;
+      white-space: normal;
+    }
+
+    .great-offer-section .go-card-bottles--small .go-card-bottle {
+      width: min(28%, 68px);
+      margin-inline: 0 4px;
+    }
+
+    .great-offer-section .go-card-bottles--medium .go-card-bottle {
+      width: min(30%, 76px);
+    }
+
+    .great-offer-section .go-card-bottles--large .go-card-bottle {
+      width: min(32%, 82px);
+    }
+
+    .great-offer-section .go-btn {
+      min-height: 62px;
+      font-size: 22px;
+    }
+
+    .great-offer-section .go-ppm-value,
+    .great-offer-section .go-ppm-value--best {
+      font-size: 26px;
+    }
+  }
+
+  @media (max-width: 720px) {
+    .great-offer-section .go-cards {
+      gap: 10px;
+    }
+
+    .great-offer-section .go-card {
+      width: 100%;
+      max-width: 390px;
+      min-height: 0;
+      padding: 28px 24px 26px;
+      margin-inline: auto;
+      border-radius: 24px;
+    }
+
+    .great-offer-section .go-card--best {
+      margin-top: 36px;
+    }
+
+    .great-offer-section .go-best-label {
+      top: -40px;
+      font-size: 20px;
+    }
+
+    .great-offer-section .go-card-title {
+      font-size: 30px;
+      margin-bottom: 18px;
+    }
+
+    .great-offer-section .go-deal-tag {
+      font-size: 17px;
+      margin-bottom: 26px;
+    }
+
+    .great-offer-section .go-receive-line {
+      font-size: 18px;
+      white-space: normal;
+    }
+
+    .great-offer-section .go-card-bottles {
+      min-height: 145px;
+    }
+
+    .great-offer-section .go-card-bottles--small .go-card-bottle {
+      width: min(26%, 60px);
+      margin-inline: 3px;
+    }
+
+    .great-offer-section .go-card-bottles--medium .go-card-bottle {
+      width: min(30%, 80px);
+    }
+
+    .great-offer-section .go-card-bottles--large .go-card-bottle {
+      width: min(32%, 100px);
+    }
+
+    .great-offer-section .go-btn {
+      min-height: 64px;
+      border-radius: 999px;
+      font-size: 22px;
+      padding: 18px 18px;
+      margin-bottom: 24px;
+    }
+
+    .great-offer-section .go-ppm-value,
+    .great-offer-section .go-ppm-value--best {
+      font-size: 26px;
+    }
+
+    .great-offer-section .go-saving {
+      display: block;
+      font-size: 18px;
+      text-align: center;
+      margin: 20px 0 0;
+    }
+  }
 {% endstylesheet %}
 
 <script src="{{ 'great-offer.js' |  asset_url }}" defer></script>
@@ -802,6 +1196,11 @@
           "id": "products",
           "label": "Scent products",
           "limit": 12
+        },
+        {
+          "type": "image_picker",
+          "id": "card_image",
+          "label": "Card bottle image"
         },
         {
           "type": "text",
@@ -865,6 +1264,11 @@
           "limit": 12
         },
         {
+          "type": "image_picker",
+          "id": "card_image",
+          "label": "Card bottle image"
+        },
+        {
           "type": "text",
           "id": "size_label",
           "label": "Size label (e.g., '50 ml')",
@@ -916,7 +1320,7 @@
           "type": "textarea",
           "id": "saving_text",
           "label": "Savings text (optional, e.g., '57% cheaper per ml than 20ml option')",
-          "default": "57% cheaper per ml than 20ml option"
+          "default": "I'm not making much from doing this. It's mainly to encourage new customers who make future orders."
         },
         {
           "type": "text",
