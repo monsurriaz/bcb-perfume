@@ -6,9 +6,13 @@
 <section class="great-offer-section">
   <div class="go-inner">
     <div class="go-header">
-      <div class="go-eyebrow">{{ section.settings.eyebrow_text }}</div>
+      {% if section.settings.eyebrow_text != blank %}
+        <div class="go-eyebrow">{{ section.settings.eyebrow_text }}</div>
+      {% endif %}
       <h2 class="go-title">{{ section.settings.title }}</h2>
-      <p class="go-subtitle">{{ section.settings.subtitle }}</p>
+      {% if section.settings.subtitle != blank %}
+        <p class="go-subtitle">{{ section.settings.subtitle }}</p>
+      {% endif %}
     </div>
 
     <div class="go-cards">
@@ -190,6 +194,10 @@
     margin-bottom: 48px;
   }
 
+  .go-header:not(:has(.go-subtitle)) {
+    margin-bottom: clamp(48px, 5vw, 68px);
+  }
+
   .go-eyebrow {
     display: inline-block;
     font-size: 11px;
@@ -203,8 +211,9 @@
 
   .go-title {
     font-family: 'Playfair Display', serif;
-    font-size: clamp(2.2rem, 5vw, 3.8rem);
-    font-weight: 900;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+    font-size: clamp(1.8rem, 5vw, 3.8rem);
+    font-weight: 700;
     color: var(--go-dark);
     line-height: 1.1;
     margin-bottom: 14px;
@@ -707,13 +716,6 @@
     .great-offer-section .go-cards {
       gap: 10px;
     }
-    .go-card {
-      /* border-radius: 13px;
-      padding: 8px 8px 12px; */
-    }
-    .go-card--best {
-      /* transform: none; */
-    }
     .go-card--best:hover {
       transform: translateY(-6px);
     }
@@ -816,6 +818,10 @@
 
   }
 
+  .go-card.go-card--best {
+    display: grid;
+  }
+
   .great-offer-section .go-card .go-card__inner {
     border: 6px solid #e8e0d4;
     border-radius: 28px;
@@ -912,13 +918,16 @@
     order: 3;
     font-size: 18px;
     line-height: 1.25;
-    font-weight: 700;
+    font-weight: 600;
     color: #050505;
     margin-bottom: 25px;
     white-space: nowrap;
   }
 
   .great-offer-section .go-receive-line span {
+    display: inline-block;
+    font-weight: 800;
+    font-size: 20px;
     color: #18ad18;
   }
 
@@ -930,7 +939,7 @@
     display: flex;
     align-items: flex-end;
     justify-content: center;
-    margin: auto 0 5px;
+    margin: auto 0 0;
     overflow: hidden;
   }
 
@@ -946,12 +955,12 @@
   }
 
   .great-offer-section .go-card-bottles--small .go-card-bottle {
-    width: min(29%, 75px);
+    width: min(29%, 72px);
     margin-inline: 4px;
   }
 
   .great-offer-section .go-card-bottles--medium .go-card-bottle {
-    width: min(31%, 90px);
+    width: min(31%, 82px);
   }
 
   .great-offer-section .go-card-bottles--large .go-card-bottle {
@@ -1001,17 +1010,16 @@
     font-family: inherit;
     font-size: 20px;
     line-height: 1;
-    font-weight: 700;
+    font-weight: 800;
     color: #050505;
   }
 
   .great-offer-section .go-ppm-value::after {
     content: "/ml";
-    font-weight: 700;
+    font-weight: 500;
   }
 
   .great-offer-section .go-saving {
-    order: 7;
     width: 100%;
     margin: 22px 0 0;
     padding: 0 10px;
@@ -1022,8 +1030,12 @@
     line-height: 1.15;
     font-weight: 500;
     letter-spacing: 0;
-    text-align: center;
     overflow-wrap: anywhere;
+  }
+  .great-offer-section .go-saving::before {
+    content: "*";
+    position: relative;
+    top: -1.5px;
   }
 
   .great-offer-section .go-divider,
@@ -1052,8 +1064,12 @@
     }
 
     .great-offer-section .go-receive-line {
-      font-size: 18px;
+      font-size: 16px;
       white-space: normal;
+    }
+
+    .great-offer-section .go-receive-line span {
+      font-size: 18px;
     }
 
     .great-offer-section .go-card-bottles--small .go-card-bottle {
@@ -1114,39 +1130,44 @@
       padding: 4px 8px;
       letter-spacing: -0.035rem;
       min-height: 30px;
+      margin-inline: -5px;
     }
 
     .great-offer-section .go-receive-line {
-      font-size: 14px;
+      font-size: 9.33px;
       white-space: normal;
       margin-bottom: 10px;
     }
 
+    .great-offer-section .go-receive-line span {
+      font-size: 10.66px;
+    }
+
     .great-offer-section .go-card-bottles {
-      min-height: 45px;
+      min-height: 65px;
     }
 
     .great-offer-section .go-card-bottles--small .go-card-bottle {
-      width: min(24%, 60px);
+      width: min(23%, 60px);
       margin-inline: 3px;
     }
 
     .great-offer-section .go-card-bottles--medium .go-card-bottle {
-      width: min(28%, 80px);
+      width: min(27%, 80px);
       margin-inline: 1px;
     }
 
     .great-offer-section .go-card-bottles--large .go-card-bottle {
-      width: min(33%, 100px);
+      width: min(35%, 100px);
       margin-inline: 0px;
     }
 
     .great-offer-section .go-btn {
-      min-height: 35px;
-      border-radius: 999px;
+      min-height: 32px;
+      border-radius: 9px;
       font-size: 12px;
-      padding: 10px 12px;
-      margin-bottom: 14px;
+      padding: 8px 10px;
+      margin-bottom: 12px;
     }
 
     .great-offer-section .go-ppm-value,
@@ -1158,8 +1179,8 @@
       display: block;
       font-size: 10px;
       text-align: center;
-      margin: 6px 0 0;
-      padding: 0px 6px;
+      margin: 10px 0 0;
+      padding: 0px 5px;
     }
   }
 {% endstylesheet %}
@@ -1323,7 +1344,7 @@
           "type": "textarea",
           "id": "saving_text",
           "label": "Savings text (optional, e.g., '57% cheaper per ml than 20ml option')",
-          "default": "*I'm not making much from doing this. It's mainly to encourage new customers who make future orders."
+          "default": "I'm not making much from doing this. It's mainly to encourage new customers who make future orders."
         },
         {
           "type": "text",
