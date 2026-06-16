@@ -179,7 +179,7 @@
             "deal_tag_text": "Buy 1 Get 2 Free",
             "per_ml_label": "Per ml",
             "per_ml_value": "£0.15",
-            "saving_text": "I'm not making much from doing this. It's mainly to encourage new customers who make future orders.",
+            "saving_text": "I’m not making much from doing this. It’s to encourage new customers who make future orders.",
             "btn_text": "Choose your 3 →",
             "btn_text_mobile": "Choose 3 →"
           }
@@ -193,7 +193,7 @@
       "name": "Great Offer Bundle",
       "settings": {
         "eyebrow_text": "",
-        "title": "Buy 1 Get 1 Free Unlocked",
+        "title": "Buy 1 get 1 free unlocked",
         "subtitle": ""
       }
     }
