@@ -3,7 +3,7 @@
   choose scents via a modal, and add multiple variant items to cart at once.
 {%- endcomment -%}
 
-<section class="great-offer-section">
+<section class="great-offer-section" id="section-{{ section.id }}">
   <div class="go-inner">
     <div class="go-header">
       {% if section.settings.eyebrow_text != blank %}
@@ -129,6 +129,9 @@
                   <span class="go-btn-text">{{ block.settings.btn_text }}</span>
                   <span class="go-btn-mobile-text">{{ block.settings.btn_text_mobile }}</span>
                 </button>
+                {% if block.settings.best_value != blank %}
+                  <div class="go-best-bottom">{{ block.settings.best_value }}</div>
+                {% endif %}
               </div>
 
               {%- if is_featured and block.settings.saving_text != blank -%}
@@ -141,6 +144,10 @@
         {%- endif -%}
       {%- endfor -%}
     </div>
+
+    {% if section.settings.footer_text != blank %}
+      <div class="go-footer-text go-saving">{{ section.settings.footer_text }}</div>
+    {% endif %}
 
     <!-- Modal -->
     <div class="go-modal" id="go-modal">
@@ -172,7 +179,7 @@
   </div>
 </section>
 
-{% stylesheet %}
+{% style %}
   .great-offer-section * { box-sizing: border-box; margin: 0; padding: 0; }
   .great-offer-section {
     --go-gold: #c9a84c;
@@ -228,10 +235,19 @@
   }
 
   .go-cards {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
     gap: 20px;
     align-items: center;
+    --go-gap: 20px;
+  }
+
+  /* Each card keeps the exact width a 3-column grid track would give it,
+     so 1 or 2 cards simply center instead of stretching to fill the row. */
+  .go-cards > .go-card {
+    flex: 0 1 calc((100% - (2 * var(--go-gap, 20px))) / 3);
+    max-width: calc((100% - (2 * var(--go-gap, 20px))) / 3);
   }
 
   .go-card .go-card__inner {
@@ -242,6 +258,7 @@
     text-align: center;
     transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1),
       box-shadow 0.25s;
+    position: relative;
   }
 
   .go-card:hover {
@@ -298,6 +315,18 @@
   }
   .go-best-text-desktop {
     display: inline-block;
+  }
+
+  .go-best-bottom {
+    font-size: 14px;
+    text-transform: uppercase;
+    background-color: var(--go-gold);
+    color: #fff;
+    font-weight: 600;
+    padding: 6px 15px;
+    position: absolute;
+    bottom: -18px;
+    border-radius: 20px;
   }
 
   .go-size-badge {
@@ -812,6 +841,7 @@
   .great-offer-section .go-cards {
     gap: 28px;
     align-items: stretch;
+    --go-gap: 28px; 
   }
 
   .great-offer-section .go-card {
@@ -931,9 +961,9 @@
     color: #18ad18;
   }
 
-  .great-offer-section .go-card-bottles {
+  #section-{{ section.id }} .go-card-bottles {
     order: 4;
-    min-height: 185px;
+    min-height: {{ section.settings.bottle_min_height }}px;
     width: 100%;
     max-width: 100%;
     display: flex;
@@ -955,16 +985,26 @@
   }
 
   .great-offer-section .go-card-bottles--small .go-card-bottle {
-    width: min(29%, 72px);
     margin-inline: 4px;
   }
 
-  .great-offer-section .go-card-bottles--medium .go-card-bottle {
-    width: min(31%, 82px);
-  }
+  /* Width rules are gated to min-width:991px on purpose: an #id selector
+  outranks the plain .great-offer-section tablet (721-990px) rule below
+  on specificity alone, media query or not. Without this guard, these
+  desktop settings would leak into and override the tablet breakpoint,
+  which stays fixed and shared across every instance of this section. */
+  @media (min-width: 991px) {
+    #section-{{ section.id }} .go-card-bottles--small .go-card-bottle {
+      width: min(29%, {{ section.settings.bottle_width_small }}px);
+    }
 
-  .great-offer-section .go-card-bottles--large .go-card-bottle {
-    width: min(33%, 120px);
+    #section-{{ section.id }} .go-card-bottles--medium .go-card-bottle {
+      width: min(31%, {{ section.settings.bottle_width_medium }}px);
+    }
+
+    #section-{{ section.id }} .go-card-bottles--large .go-card-bottle {
+      width: min(33%, {{ section.settings.bottle_width_large }}px);
+    }
   }
 
   .great-offer-section .go-btn {
@@ -1033,10 +1073,16 @@
     letter-spacing: 0;
     overflow-wrap: anywhere;
   }
+  .go-footer-text.go-saving {
+    text-align: center;
+    width: 60%;
+    margin-inline: auto;
+    margin-top: 50px;
+  }
   .great-offer-section .go-saving::before {
     content: "*";
     position: relative;
-    top: -1.5px;
+    top: -2px;
   }
 
   .great-offer-section .go-divider,
@@ -1047,6 +1093,7 @@
   @media (max-width: 990px) {
     .great-offer-section .go-cards {
       gap: 20px;
+      --go-gap: 20px;
     }
 
     .great-offer-section .go-card .go-card__inner {
@@ -1100,6 +1147,20 @@
   @media (max-width: 720px) {
     .great-offer-section .go-cards {
       gap: 8px;
+      --go-gap: 8px;
+    }
+
+    {%- comment -%}
+      Cards-per-row on mobile comes from a section setting (2 or 3), so it
+      must be scoped by #section-{{ section.id }} (not the shared
+      .great-offer-section class) the same way the bottle sizing settings
+      are above — otherwise multiple instances on one page would clash.
+    {%- endcomment -%}
+    {%- assign go_mobile_cols = section.settings.mobile_columns | plus: 0 -%}
+    {%- assign go_mobile_gaps = go_mobile_cols | minus: 1 -%}
+    #section-{{ section.id }} .go-cards > .go-card {
+      flex-basis: calc((100% - ({{ go_mobile_gaps }} * var(--go-gap, 8px))) / {{ go_mobile_cols }});
+      max-width: calc((100% - ({{ go_mobile_gaps }} * var(--go-gap, 8px))) / {{ go_mobile_cols }});
     }
 
     .great-offer-section .go-card {
@@ -1108,11 +1169,15 @@
     
     .great-offer-section .go-card .go-card__inner {
       width: 100%;
-      min-height: 0;
       border-radius: 14px;
-      padding: 12px 8px;
+      padding: 12px 10px 20px;
       margin-inline: auto;
       border-width: 2px;
+    }
+
+    #section-{{ section.id }}.great-offer-section .go-card .go-card__inner {
+      min-height: {{ section.settings.card_min_height_mobile }}%;
+      border-width: 5px;
     }
 
     .great-offer-section .go-best-label {
@@ -1135,7 +1200,7 @@
     }
 
     .great-offer-section .go-receive-line {
-      font-size: 12px;
+      font-size: 11px;
       white-space: normal;
       margin-bottom: 10px;
       margin-inline: -5px;
@@ -1146,22 +1211,22 @@
       font-size: 12px;
     }
 
-    .great-offer-section .go-card-bottles {
-      min-height: 65px;
+    #section-{{ section.id }} .go-card-bottles {
+      min-height: {{ section.settings.bottle_min_height_mobile }}px;
     }
 
-    .great-offer-section .go-card-bottles--small .go-card-bottle {
-      width: min(23%, 60px);
+    #section-{{ section.id }} .go-card-bottles--small .go-card-bottle {
+      width: min({{ section.settings.bottle_pct_small_mobile }}%, 60px);
       margin-inline: 3px;
     }
 
-    .great-offer-section .go-card-bottles--medium .go-card-bottle {
-      width: min(27%, 80px);
+    #section-{{ section.id }} .go-card-bottles--medium .go-card-bottle {
+      width: min({{ section.settings.bottle_pct_medium_mobile }}%, 80px);
       margin-inline: 1px;
     }
 
-    .great-offer-section .go-card-bottles--large .go-card-bottle {
-      width: min(35%, 100px);
+    #section-{{ section.id }} .go-card-bottles--large .go-card-bottle {
+      width: min({{ section.settings.bottle_pct_large_mobile }}%, 100px);
       margin-inline: 0px;
     }
 
@@ -1171,6 +1236,12 @@
       font-size: 12px;
       padding: 8px 10px;
       margin-bottom: 12px;
+    }
+
+    .go-best-bottom {
+      font-size: 11px;
+      padding: 4px 10px;
+      bottom: -13px;
     }
 
     .great-offer-section .go-ppm-value,
@@ -1184,8 +1255,14 @@
       margin: 5px 0 0;
       padding: 0px 5px;
     }
+    .go-footer-text.go-saving {
+      width: 95%;
+      margin-top: 30px;
+      margin-inline: auto;
+      font-size: 13px;
+    }
   }
-{% endstylesheet %}
+{% endstyle %}
 
 <script src="{{ 'great-offer.js' |  asset_url }}" defer></script>
 
@@ -1210,6 +1287,123 @@
       "id": "subtitle",
       "label": "Subtitle",
       "default": "Buy our bestselling perfumes and receive extra bottles completely free. Choose your size below."
+    },
+    {
+      "type": "text",
+      "id": "footer_text",
+      "label": "Footer text"
+    },
+    {
+      "type": "range",
+      "id": "card_min_height_mobile",
+      "label": "Card min-height (mobile)",
+      "min": 0,
+      "max": 100,
+      "step": 20,
+      "unit": "%",
+      "default": 0
+    },
+    {
+      "type": "header",
+      "content": "Bottle image sizing"
+    },
+    {
+      "type": "paragraph",
+      "content": "Controls the bottle image area on desktop and mobile. The tablet breakpoint (721–990px) is fixed and shared across every instance of this section."
+    },
+    {
+      "type": "range",
+      "id": "bottle_min_height",
+      "label": "Bottle area min-height (desktop)",
+      "min": 40,
+      "max": 300,
+      "step": 5,
+      "unit": "px",
+      "default": 185
+    },
+    {
+      "type": "range",
+      "id": "bottle_min_height_mobile",
+      "label": "Bottle area min-height (mobile)",
+      "min": 20,
+      "max": 150,
+      "step": 5,
+      "unit": "px",
+      "default": 65
+    },
+    {
+      "type": "range",
+      "id": "bottle_width_small",
+      "label": "Small size bottle max width (desktop)",
+      "min": 20,
+      "max": 150,
+      "step": 2,
+      "unit": "px",
+      "default": 72
+    },
+    {
+      "type": "range",
+      "id": "bottle_pct_small_mobile",
+      "label": "Small size bottle max width (mobile, % of card)",
+      "min": 20,
+      "max": 50,
+      "step": 1,
+      "unit": "%",
+      "default": 23
+    },
+    {
+      "type": "range",
+      "id": "bottle_width_medium",
+      "label": "Medium size bottle max width (desktop)",
+      "min": 20,
+      "max": 150,
+      "step": 2,
+      "unit": "px",
+      "default": 82
+    },
+    {
+      "type": "range",
+      "id": "bottle_pct_medium_mobile",
+      "label": "Medium size bottle max width (mobile, % of card)",
+      "min": 20,
+      "max": 50,
+      "step": 1,
+      "unit": "%",
+      "default": 27
+    },
+    {
+      "type": "range",
+      "id": "bottle_width_large",
+      "label": "Large size bottle max width (desktop)",
+      "min": 20,
+      "max": 200,
+      "step": 2,
+      "unit": "px",
+      "default": 120
+    },
+    {
+      "type": "range",
+      "id": "bottle_pct_large_mobile",
+      "label": "Large size bottle max width (mobile, % of card)",
+      "min": 20,
+      "max": 50,
+      "step": 1,
+      "unit": "%",
+      "default": 35
+    },
+    {
+      "type": "header",
+      "content": "Mobile layout"
+    },
+    {
+      "type": "select",
+      "id": "mobile_columns",
+      "label": "Cards per row (mobile)",
+      "options": [
+        { "value": "2", "label": "2 per row" },
+        { "value": "3", "label": "3 per row" }
+      ],
+      "default": "3"
     }
   ],
   "blocks": [
@@ -1275,6 +1469,11 @@
           "id": "btn_text_mobile",
           "label": "Button text - (mobile)",
           "default": "Choose 2 →"
+        },
+        {
+          "type": "text",
+          "id": "best_value",
+          "label": "Best value text"
         }
       ]
     },

@@ -138,7 +138,8 @@
             "per_ml_label": "Per ml",
             "per_ml_value": "£0.35",
             "btn_text": "Choose your 2 →",
-            "btn_text_mobile": "Choose 2 →"
+            "btn_text_mobile": "Choose 2 →",
+            "best_value": ""
           }
         },
         "offer_card_d8KMCW": {
@@ -158,7 +159,8 @@
             "per_ml_label": "Per ml",
             "per_ml_value": "£0.32",
             "btn_text": "Choose your 2 →",
-            "btn_text_mobile": "Choose 2 →"
+            "btn_text_mobile": "Choose 2 →",
+            "best_value": ""
           }
         },
         "featured_offer_card_ekKcmN": {
@@ -190,17 +192,123 @@
         "offer_card_d8KMCW",
         "featured_offer_card_ekKcmN"
       ],
+      "disabled": true,
       "name": "Great Offer Bundle",
       "settings": {
         "eyebrow_text": "",
         "title": "Buy 1 get 1 free unlocked",
-        "subtitle": ""
+        "subtitle": "",
+        "footer_text": "",
+        "card_min_height_mobile": 0,
+        "bottle_min_height": 185,
+        "bottle_min_height_mobile": 65,
+        "bottle_width_small": 72,
+        "bottle_pct_small_mobile": 23,
+        "bottle_width_medium": 82,
+        "bottle_pct_medium_mobile": 27,
+        "bottle_width_large": 120,
+        "bottle_pct_large_mobile": 35,
+        "mobile_columns": "3"
+      }
+    },
+    "great_offer_cPrQYD": {
+      "type": "great-offer",
+      "blocks": {
+        "offer_card_ezhwAP": {
+          "type": "offer_card",
+          "settings": {
+            "products": [
+              "bcb-perfume-n47",
+              "bcb-perfume-n53",
+              "bcb-perfume-n68",
+              "bcb-perfume-n82"
+            ],
+            "card_image": "shopify://shop_images/Bottle.png",
+            "size_label": "50 ml",
+            "size_option_value": "50ml",
+            "qty_included": 2,
+            "deal_tag_text": "Buy 1 Get 1 Free",
+            "per_ml_label": "Per ml",
+            "per_ml_value": "£0.23",
+            "btn_text": "Choose your 2 →",
+            "btn_text_mobile": "Choose 2 →",
+            "best_value": ""
+          }
+        },
+        "offer_card_QtCbdh": {
+          "type": "offer_card",
+          "settings": {
+            "products": [
+              "bcb-perfume-n47",
+              "bcb-perfume-n53",
+              "bcb-perfume-n68",
+              "bcb-perfume-n82"
+            ],
+            "card_image": "shopify://shop_images/Bottle.png",
+            "size_label": "100 ml",
+            "size_option_value": "100ml",
+            "qty_included": 2,
+            "deal_tag_text": "Buy 1 Get 1 Free",
+            "per_ml_label": "Per ml",
+            "per_ml_value": "£0.16",
+            "btn_text": "Choose your 2 →",
+            "btn_text_mobile": "Choose 2 →",
+            "best_value": "⭐ Best Value"
+          }
+        },
+        "featured_offer_card_PDWX6E": {
+          "type": "featured_offer_card",
+          "disabled": true,
+          "settings": {
+            "products": [
+              "bcb-perfume-n47",
+              "bcb-perfume-n53",
+              "bcb-perfume-n68",
+              "bcb-perfume-n82"
+            ],
+            "card_image": "shopify://shop_images/Bottle.png",
+            "size_label": "50 ml",
+            "size_option_value": "50ml",
+            "qty_included": 3,
+            "best_value_text": "⭐ Best Value by Far",
+            "best_value_text_mobile": "⭐ Best Value",
+            "deal_tag_text": "Buy 1 Get 2 Free",
+            "per_ml_label": "Per ml",
+            "per_ml_value": "£0.15",
+            "saving_text": "I’m not making much from doing this. It’s to encourage new customers who make future orders.",
+            "btn_text": "Choose your 3 →",
+            "btn_text_mobile": "Choose 3 →"
+          }
+        }
+      },
+      "block_order": [
+        "offer_card_ezhwAP",
+        "offer_card_QtCbdh",
+        "featured_offer_card_PDWX6E"
+      ],
+      "name": "Great Offer Bundle",
+      "settings": {
+        "eyebrow_text": "",
+        "title": "Buy 1 get 1 free unlocked",
+        "subtitle": "",
+        "footer_text": "I’m not making much from doing this. It’s to encourage new customers who make future orders.",
+        "card_min_height_mobile": 100,
+        "bottle_min_height": 135,
+        "bottle_min_height_mobile": 65,
+        "bottle_width_small": 72,
+        "bottle_pct_small_mobile": 23,
+        "bottle_width_medium": 82,
+        "bottle_pct_medium_mobile": 32,
+        "bottle_width_large": 120,
+        "bottle_pct_large_mobile": 35,
+        "mobile_columns": "2"
       }
     }
   },
   "order": [
     "header_announcements_9jGBFp",
     "header_section",
-    "great_offer_mHPt4m"
+    "great_offer_mHPt4m",
+    "great_offer_cPrQYD"
   ]
 }
