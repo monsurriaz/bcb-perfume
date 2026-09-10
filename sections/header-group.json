@@ -223,7 +223,7 @@
               "bcb-perfume-n68",
               "bcb-perfume-n82"
             ],
-            "card_image": "shopify://shop_images/Bottle.png",
+            "card_image": "shopify://shop_images/bottle_lighter.png",
             "size_label": "50 ml",
             "size_option_value": "50ml",
             "qty_included": 2,
@@ -231,7 +231,7 @@
             "per_ml_label": "Per ml",
             "per_ml_value": "£0.23",
             "btn_text": "Choose your 2 →",
-            "btn_text_mobile": "Choose 2 →",
+            "btn_text_mobile": "Choose your 2 →",
             "best_value": ""
           }
         },
@@ -244,7 +244,7 @@
               "bcb-perfume-n68",
               "bcb-perfume-n82"
             ],
-            "card_image": "shopify://shop_images/Bottle.png",
+            "card_image": "shopify://shop_images/bottle_lighter.png",
             "size_label": "100 ml",
             "size_option_value": "100ml",
             "qty_included": 2,
@@ -252,7 +252,7 @@
             "per_ml_label": "Per ml",
             "per_ml_value": "£0.16",
             "btn_text": "Choose your 2 →",
-            "btn_text_mobile": "Choose 2 →",
+            "btn_text_mobile": "Choose your 2 →",
             "best_value": "⭐ Best Value"
           }
         },
@@ -293,14 +293,14 @@
         "subtitle": "",
         "footer_text": "I’m not making much from doing this. It’s to encourage new customers who make future orders.",
         "card_min_height_mobile": 100,
-        "bottle_min_height": 135,
-        "bottle_min_height_mobile": 65,
+        "bottle_min_height": 130,
+        "bottle_min_height_mobile": 75,
         "bottle_width_small": 72,
-        "bottle_pct_small_mobile": 23,
-        "bottle_width_medium": 82,
-        "bottle_pct_medium_mobile": 32,
+        "bottle_pct_small_mobile": 22,
+        "bottle_width_medium": 72,
+        "bottle_pct_medium_mobile": 29,
         "bottle_width_large": 120,
-        "bottle_pct_large_mobile": 35,
+        "bottle_pct_large_mobile": 40,
         "mobile_columns": "2"
       }
     }
